@@ -1,0 +1,301 @@
+#tomcat配置
+server:
+  tomcat:
+    max-threads: 500 # Maximum amount of worker threads.
+    min-spare-threads: 32 # Minimum amount of worker threads
+    basedir: /tmp/tomcat
+
+#feign config
+feign:
+  compression:
+    request:
+      enabled: true
+      min-request-size: 2048
+      mime-types: text/xml,application/xml,application/json
+    response:
+      enaabled: true
+  hystrix:
+    enabled: true
+  httpclient:
+    enabled: true
+  names:
+    core: bolt-v1-feign
+  pangconfig:
+    max: 320
+    defMaxPerRoute: 160
+    connectTimeout: 10000
+    socketTimeout: 10000
+    connectRequestTimeout: 10000
+  applicationName:
+    order: bolt-v1-order
+    resource: bolt-v1-resource
+    didi: bolt-v1-didi
+    finance: bolt-v1-finance
+    mis: bolt-v1-mis
+    statistics: bolt-v1-statistics
+
+#hystrix config
+hystrix:
+  threadpool:
+    default:
+      coreSize: 32
+      maxQueueSize: 100
+      queueSizeRejectionThreshold: 64
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+        isolation:
+          thread:
+            timeoutInMilliseconds: 20000
+
+#ribbon config
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
+  OkToRetryOnAllOperations: false
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 0
+
+#spring config
+spring:
+  resources:
+    add-mappings: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  servlet:
+    multipart:
+      max-file-size: 1000MB
+      max-request-size: 1000MB
+  jedis:
+    pool:
+      order:
+        #总连接数 
+        maxTotal: 200
+        #最大空闲连接数
+        maxIdle: 160
+      didi:
+        maxTotal: 200
+        maxIdle: 160
+      mis:
+        maxTotal: 100
+        maxIdle: 40
+      nio:
+        maxTotal: 200
+        maxIdle: 160
+      other:
+        maxTotal: 50
+        maxIdle: 40
+      #暂时保留              
+      maxTotal: 200
+      maxIdle: 160
+      
+      minIdle: 10
+      maxWaitMillis: 200
+      numTestsPerEvictionRun: 1024
+      timeBetweenEvictionRunsMillis: 10000
+      minEvictableIdleTimeMillis: -1
+      softMinEvictableIdleTimeMillis: 500
+      testOnBorrow: true
+      testWhileIdle: true
+      testOnReturn: false
+      blockWhenExhausted: true
+      timeout: 10000
+    lru:
+      host: 111.229.197.88
+      port: 6379
+      password: Aa123#
+    #暂时保留  
+    cluster:
+      nodes: 111.229.197.88:6379
+      password: Aa123#
+      timeout: 20000
+      max-redirects: 8
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+#    driverClassName: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
+    platform: mysql
+    url: jdbc:mysql://111.229.197.88:3306/bolt-servers-pre?serverTimezone=GMT%2B8&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    username: root
+    password: Aa123#
+    initialSize: 2
+    minIdle: 2
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    monitor:
+      username: druid
+      password: ENC(1t+C02BP61V/UMW7BoUYa+R1PCH965VX)
+      allow: localhost
+      deny: null
+  elasticsearch:
+    jest:
+      uris: http://192.168.3.109:9200
+      read-timeout: 5000ms
+      connection-timeout: 3000ms
+      multi-threaded: true 
+      
+#config of mybatis plus
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*Mapper.xml
+  #枚举存在包
+  typeEnumsPackage: com.xnyzc.lhy.common.penum
+  global-config:
+    db-config:
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 1
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 2
+    #驼峰下划线转换
+    db-column-underline: true
+    #刷新mapper 调试神器
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    #配置JdbcTypeForNull
+    jdbc-type-for-null: 'null'
+
+# 通用配置
+global:
+  startRecord: 1
+  #是否获取杭州绿码
+  getGreenCode: true
+  #api域名
+  apiDomain: api.chuangwetech.com
+  oss:
+    ossType: qcloud
+  #胖管家配置
+  pang:
+    rediskey: bolt-
+    signCheck: false
+    didiSignCheck: false
+    mq:
+      groupNames:
+        producer: boltPro
+        consumerPre: boltCon
+      nameServerAddr: 192.168.3.22:9876;192.168.3.36:9876
+      topics: topic
+      tag: orderTag
+  #阿里
+  ali:
+    #OSS
+    oss:
+      endpoint: https://oss-cn-beijing.aliyuncs.com
+      accessKeyId: LTAIJhf6DpKmVZro
+      accessKeySecret: SKxEa9ccJJPeimm0je31u9GbNKO0XO
+      bucketName: official-bucket
+      validityTime: 60
+     #支付
+    pay:
+      appId: 201802369634
+      paySeller: 17735767163.com
+      payPublicKey: MIIBIjOCAQ8AMIIBCgKCAQEAmQEaMhLtiXTY1LR0v6EEzqf7AXNmGVeqqYR4O007MCPDs+Pd2AVef0OUsXl4uqTSpymzNJVhKWMtm/7LNUegKrEnqDXHPBCm/moOm1WBE/hdt8X/CnaU1Y/DZQqXfoIHUHS3+TeXEpEu3N6Ef9KdCjjY5YSFUDt8lfqtKXsB+kPeLnE8jyczl6jp8QBU0SRiqh42LPehZ4PJT8S/TBaU1hA9jZJwOsZf4oPmTsWinHwuvrZuLU8ovD49IagXO24w60f72K/pzrt3GbAkRb0sWzJLodYlh1HxlBU+7HYWh99EwB2F1JwxygNFNj+0mlFFAF1pZadnM4QQ8XoiGjp9rwIDAQAB
+      payPrivateKey: MIIEvAIBiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCZARoyEu2JdNjUtHS/oQTOp/sBc2YZV6qphHg7TTswI8Oz493YBV5/Q5SxeXi6pNKnKbM0lWEpYy2b/ss1R6AqsSeoNcc8EKb+ag6bVYET+F23xf8KdpTVj8NlCpd+ggdQdLf5N5cSkS7c3oR/0p0KONjlhIVQO3yV+q0pewH6Q94ucTyPJzOXqOnxAFTRJGKqHjYs96Fng8lPxL9MFpTWED2NknA6xl/ig+ZOxaKcfC6+tm4tTyi8Pj0hqBc7bjDrR/vYr+nOu3cZsCRFvSxbMkuh1iWHUfGUFT7sdhaH30TAHYXUnDHKA0U2P7SaUUUAXWllp2czhBDxeiIaOn2vAgMBAAECggEAXbPXHyOIZc4xnNKHTXSHRSiLCHBr7slJs1d1apv5y5mbmOfMTSe8n6P7xFToIyYd/FIFdgal4nriy85XFOIwrPShnNqSka6BFv5Mw8SxsFFC0/FmKDpHHCNXPuIltUxcvmE86lupIa3YTVvZOY76re/ypV1rZ5+GxTMoKWcz5tgGNT6me8GADb4XOfdpm7hBpLMkJRhQjdhOidp2KiLx0H6G6PgtkMprGPIES8iSpaay8lJQXkw+92FirtXBZatKEQoCC/E39eDTtExCp5PhhWAxxnXDgVzkiAObqBZf2EYi3uZimIF5yNidkqE9/wsCDNopP7N7PMQA8oGhoPv1wQKBgQDYNptkIQHTacW7PStMmP8HWS4hsfXC4oPl/E9lqAb9oDBtN4OwZj0euOiphxDf+gh+kc5HWMgvYX776i4iBRWBdI4Q9PbDh4MnyCxO7+o/+TEMLS8j0rslNdobS5L8NtNJ3K1J1jjQOWLo5/wt4P9VBpPrvoFo6N5kiJwxbO7I6wKBgQC1KNdAGcydxehA3hc94RUyt+4Ilv4OpjZbOXrCRFP99LYT8xJuvi/Hv76q27p8OrTYYLdaagFnclGwC30eudzlk0Zsw9yjmuX+dbFoHTGfHuTh7sMB91RF7tbZQl+BgDVKnFm43NZ7eLsOuYdwRTp1TxOX63FXOq5CsTTCyZRtTQKBgDLIeK0G96fRYyj8UAw4r0Xpk2VEqEWy8Gn3XiqxUZsGofk1HdAz400w/yy6VaNV1eLsmje1yacfTjUbJuTEru1uE+Q1tTPtw0d3w7hyr2GBRRzoC/dtCpnN0UGx+X8V3YCuvWDnWQbHQ80Sl++qti4hUmL/puOeNoYEdDNDs74rAoGAKg4XGixjEeVVq2ljX9wWvbVxLtFOnTv8tmS7mMmf7f6XHj55cvf3w5lBvAxSWHCQdwLMzdJ6DPe++u1P2IgxPaJY4Pr/B4P4DIBp9M+CK3xSihiRcK1oBOwTOFBuN3P56x4svfuWVweJ9Tsgs/F+Rqla1RO1NhjLR3Q32VhOeqkCgYBUbGykSNGHHv88bkasyfkbLz9ogGMjxA6EV7I0/btDWD6Hg6R5xLFC4avzCn1fNYvdMdZy/rSokDSBKv+0dbUSshuPO6+/7zQER467F6YSjpotX5uAmIo4DP32TSnv7h8bklnou3jc5SfZhXY0vgR/OsRGp9oXHYdEionHxF9/RQ==
+  #submail短信平台
+  subMail:
+    appId: 39168
+    appKey: 1026a4bdcef4d67c8a627f8
+    signature: 【闪电出行测试】
+    signType: md5
+  #腾讯云相关
+  qcloud:
+    #短信平台
+    sms:
+      appId: 1400280334
+      appKey: b415448fa6e70e10f167c78c1bdbf5da
+      signature: 蓝色大道
+      nationCode: 86
+    #d对象存储
+    cos: 
+      secretid: AKIDud9WeYywMWTAiFxw3wb2DG4dx1qPu7GB
+      secretkey: ua2EDCvOcdQxKSLyMVRX8VeZFfW9cqoX
+      regionstr: ap-beijing
+      bucketname: bolt-1300098049
+      validityTime: 60
+  didi:
+    appId: 1007
+    url: https://api.xiaojukeji.com
+    #公钥
+    signReq: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDYoR4yVhDMR5GptF255q2rzSVp05sF1BkSmG6k/zivvDDqMhWmyEn0Rf/r2zm0ZGPm9UgLwT2YEKduDd2Swj/Lfe6NepUQQx0eWthf/f738IGb/QdnXHfBOGqtn9Hcv/uYf8ppbgrf12hVZcLI+YA9XVjZwV5adTWcpIEBzp8fHwIDAQAB
+    #私钥
+    signPro: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMq6udwyOmyiz9GXPGTfBL1ZyD172bf1MXjt5T7wB3aSjdco7av3INtvdGhm3x4xOBaGmfKmMdTU9IT8ka+/w65jGlwtqfPCjhJS33UDHLV5hi/s9zNmIFjej0o226PyUUZoZOfSdEisz3X1JbIk3xEmRv+vZ5FxU5KSVodtukpxAgMBAAECgYEAt52UBUpA/HAiRjTycHJGOrH82SM5uJINsvfVMMH6IHzwlzXsvlpgmh9CkeTKpO/zWwOin9HDRH900JZp5YKMWeJ/xfQER+jENdXTtfArFXHIpLfh5OY5lwITsC2z/Yoe5+8RBwxZBLpYhqT/7zU4d+Zka7RuCVpw+hAqLhxIuJkCQQD1R3S74SOCrH63RiF6/40gBrYcuHTm8Bt4+yRhEStLpIeFKR+BG0d9hjwLMMAtyHk2azX6rE3lvQatjrnM1+0rAkEA05cpOXMOzE5Mzvmh55heJNaO2V5NSygTHYsHhvyHcYwxOqQ4maomX15WZdOzfBr/EeKgq5J7meWFQXHN9n1w0wJAFm7kpFJhFxCDvmtxoHhDBgzXFyVfu8d2G8iMeTxCw3ZW1rz+HqbKERb34uYgjY9qVqnTlAuyTDLPq4wEPlH5ZQJBAKsasS6Q+aWDqB8zxZaoI3F8xDXJSY3+UT7xv9uL+Od8rA604ER7UN6MRifAA4PXvO60qqM0KJmx/omGwzySAhsCQFvbua02xdU/+lEFtuJJW6ouvp7b5UL2FQLMKZvncyDbXWuZvavKfbEuMnPHhQC0zZ9yxoop+CIEtuULbdCUeY0=
+  heli:
+    appId: 10001
+    url: http://192.144.235.241:9000
+    #公钥
+    signHeLi: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDQ859se/S5vWtgzzD0qJlv7Luh8F+6FU5b+lbtnwWXWPnDslRp+bXr9bV1auAEBzxMhqcy9CjvROehe7Eg/2tTBiihIUvSQBL/ipmNyMG9rJxTAUpQz3Mfbtf34902elwVEnKRf1kvsXvrYBa+DWqIK6pgJLmotvAIkRk75ZNfSwIDAQAB
+  #客服外呼号码
+  phoneBar:
+    phoneNumber: 01058103104
+   #发票
+  invoice: 
+    #百望云发票
+    bop:
+      url: http://60.205.83.27/router/rest
+      appKey: 1000364
+      appSecret: 0ff5dc45-484b-41b5-a7f7-4802026c446b
+      username: QDHL
+      password: a123456
+      UUID: 2eccb8abcfe3433490e0fe8d2560e6e0
+    org:
+      taxTitle: 百望云客户专用2
+      taxNo: 36996300000000012
+      terminalCode: kpy01
+  #AA发票    
+  invoiceAa:
+    url: https://api.aachuxing.com    
+  #高德
+  amap:
+    #高德 Web API
+    webKey: 4815225edd855ffce09b96ec79b96f30
+    #高德 Web API 备用1
+    webKeyBackupOne: 29cc2b8bcddcd87002faae17ed3d8736
+    #高德 Web API 备用2
+    webKeyBackupTwo: f5e9e3610bfbb659ee27c2a067df7dfd
+    webKeyBackupThree: fd1e0ba97eb88e5e62b0532b24105d39
+    webKeyBackupFour: 6cfde1a078e587aebf86d4b0259fa8f6
+    webKeyBackupFive: 886613e23949b23d9688dd2187d12659
+    webKeyBackupSix: eb521aee7f003a4afb49700fa94a0df8
+    webKeyBackupSeven: 55ef1d50c9695b2563244cb4a9b4c9b5
+    webKeyBackupEight: e7040d257ad27513b21cb6614e3a1b57
+    webKeyBackupNine: 4a03cab75c4e4c71f35a0c4c44a0c619
+  #微信
+  weChat:
+    pay:
+      appId: wx214865ace
+      partnerId: 1550158431
+      appKey: xinjuzh00xinju0
+      appSecret: 80ceab9da283c3a1da0
+  #白名单账号
+  whitelist:
+    oaCUserPhone: 18510032425,13716420602,15201047430,17600110520,15711132786,18233110173,18000000001,18000000002,18000000003,18000000004
+    oaDUserPhone: 18510032425,13716420602,15201047430,17600110520,15711132786,18233110173,18000000001,18000000002,18000000003,18000000004
+  #极光推送
+  jPush:
+    passengerAppKey: 97bc0847e3be37e
+    passengerMasterSecret: b3e7cce4bc95d55
+    driverAppKey: 2f1ca6cac2bbca13ae38f5e3
+    driverMasterSecret: 957aaf44b9096a8655b79d0d
+    #ios推送环境，true 生产环境、false 开发环境
+    apnsProduction: true
+  #后台管理系统验证码有效时长
+  kaptcha:
+    codeTimeout: 60
+  #提现开关
+  withdraw:
+    cash: true
+    comment: "春节期间暂停提现!"  
+    merId: 808080211308382
+#Netty
+netty:
+  port: 18026
